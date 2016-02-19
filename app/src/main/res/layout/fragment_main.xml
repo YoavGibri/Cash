@@ -9,4 +9,41 @@
     tools:context="com.yoavgibri.cash.MainActivityFragment"
     tools:showIn="@layout/activity_main">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/total_expenses"
+        android:id="@+id/textViewExpensesText"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="52dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/total_income"
+        android:id="@+id/textViewIncomeText"
+        android:layout_marginTop="68dp"
+        android:layout_below="@+id/textViewExpensesText"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0"
+        android:id="@+id/textViewExpenses"
+        android:layout_below="@+id/textViewExpensesText"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0"
+        android:id="@+id/textViewIncome"
+        android:layout_below="@+id/textViewIncomeText"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

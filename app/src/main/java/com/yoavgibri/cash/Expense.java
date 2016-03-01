@@ -1,18 +1,39 @@
 package com.yoavgibri.cash;
 
+import android.support.annotation.Nullable;
+
 /**
  * Created by Yoav on 19/02/16.
  */
 
 public class Expense {
     private String name, place, comment;
-    private long time;
+    private long time, _id;
+    private int amount;
 
-    public Expense(String name, String place, String comment, long time) {
+    public Expense() {
+    }
+
+    public Expense(long _id, String name, String place, String comment, long time, int amount) {
+        this._id = _id;
         this.name = name;
         this.place = place;
         this.comment = comment;
         this.time = time;
+        this.amount = amount;
+    }
+
+    public Expense(String name, String place, String comment, long time, int amount) {
+        this.name = name;
+        this.place = place;
+        this.comment = comment;
+        this.time = time;
+        this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return time+"- "+name+", "+amount+", "+place;
     }
 
     public String getName() {
@@ -45,6 +66,22 @@ public class Expense {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public long getId() {
+        return _id;
+    }
+
+    public void setId(long _id) {
+        this._id = _id;
     }
 }
 

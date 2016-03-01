@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Cash</string>
     <string name="action_settings">Settings</string>
-    <string name="total_expenses">Total expenses this month:</string>
+    <string name="total_expenses">Total this month:</string>
     <string name="total_income">Total income this month:</string>
     <string name="currency_mark">₪</string>
+    <string name="action_clear">Clear all expenses</string>
 </resources>

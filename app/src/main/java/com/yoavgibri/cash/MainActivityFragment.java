@@ -2,6 +2,7 @@ package com.yoavgibri.cash;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -29,6 +30,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     private RecyclerView mRecyclerView;
     private ExpensesAdapter mAdapter;
     private DBHelper helper;
+
 
 
     public MainActivityFragment() {
@@ -60,7 +62,6 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
 
     private void setRecyclerItemTouch() {
         final ItemTouchHelper.SimpleCallback touchHelper = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;

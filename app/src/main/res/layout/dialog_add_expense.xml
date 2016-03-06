@@ -4,25 +4,32 @@
     android:layout_height="match_parent">
 
 
-    <!--<EditText-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/editTextWhat"-->
-        <!--android:hint="For what?"-->
-        <!--android:layout_gravity="center_horizontal"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_alignParentStart="true"/>-->
-
-    <Spinner
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinnerWhat"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:spinnerMode="dropdown"/>
+        android:id="@+id/frame">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editTextWhat"
+            android:hint="For what?"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:visibility="gone"/>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/spinnerWhat"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:spinnerMode="dropdown" />
+    </FrameLayout>
 
     <EditText
         android:layout_width="match_parent"
@@ -31,7 +38,7 @@
         android:id="@+id/editTextAmount"
         android:hint="How much?"
         android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/spinnerWhat"
+        android:layout_below="@+id/frame"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

@@ -5,4 +5,8 @@
     <string name="total_income">Total income this month:</string>
     <string name="currency_mark">₪</string>
     <string name="action_clear">Clear all expenses</string>
+    <string name="prompt">prompting</string>
+    <string name="pick_a_category">pick a category</string>
+    <string name="otherCategory">Other...</string>
+
 </resources>

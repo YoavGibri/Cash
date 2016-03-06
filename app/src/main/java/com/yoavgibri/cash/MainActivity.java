@@ -1,10 +1,12 @@
 package com.yoavgibri.cash;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -34,6 +36,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     private DBHelper helper = new DBHelper(this);
     private MainActivityFragment mMainFragment;
     private SharedPreferences mSharedPreferences;
+    private Dialog mDialog;
+    private Set<String> mCategoriesSet;
+    private List<String> mCategoriesList;
 
 
     @Override
@@ -43,18 +48,19 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mMainFragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-        mSharedPreferences = getSharedPreferences("Categories", 0);
         startPreferencesIfNotExist();
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                  showDialogNewExpense();
+                showDialogNewExpense();
+//                  showDialogNewExpense();
             }
         });
-   }
+    }
 
     private void startPreferencesIfNotExist() {
+        mSharedPreferences = getSharedPreferences("Categories", 0);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         if (!mSharedPreferences.contains(CATEGORIES)) {
             Set<String> set = new HashSet<>();
@@ -82,16 +88,31 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 //            case R.id.action_settings:
 //                return true;
             case R.id.action_clear_all_expenses:
-                helper.clearAllExpenses();
-                mMainFragment.updateRecycler();
-                mMainFragment.updateTotalExpenses();
-                Snackbar.make(mFab, "all expenses had been cleared", Snackbar.LENGTH_INDEFINITE)
-                        .setAction("UNDO", new View.OnClickListener() {
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .setTitle("Clear all expenses?")
+                        .setPositiveButton("Clear it", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(View v) {
-                                mMainFragment.undoClear();
+                            public void onClick(DialogInterface dialog, int which) {
+                                helper.clearAllExpenses();
+                                mMainFragment.updateRecycler();
+                                mMainFragment.updateTotalExpenses();
+                                Snackbar.make(mFab, "all expenses had been cleared", Snackbar.LENGTH_INDEFINITE)
+//                                        .setAction("UNDO", new View.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(View v) {
+//                                                mMainFragment.undoClear();
+//                                            }
+//                                        })
+                                        .show();
                             }
-                        }).show();
+                        })
+                        .setNegativeButton("Don't do it man!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .show();
+
                 return true;
 //            case R.id.action_dummy_content:
 //                mMainFragment.loadDummyContent();
@@ -101,27 +122,44 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         }
     }
 
-    public void showDialogNewExpense(){
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_add_expense);
+    public void showDialogNewExpense() {
+        mDialog = new Dialog(this);
+        mDialog.setContentView(R.layout.dialog_add_expense);
 
-        final EditText howMuch = (EditText) dialog.findViewById(R.id.editTextAmount);
-//        final EditText what = (EditText) dialog.findViewById(R.id.editTextWhat);
-        final Spinner spinnerWhat = (Spinner) dialog.findViewById(R.id.spinnerWhat);
-        final EditText where = (EditText) dialog.findViewById(R.id.editTextWhere);
-        final EditText comment = (EditText) dialog.findViewById(R.id.editTextComment);
-        Button ok = (Button) dialog.findViewById(R.id.buttonDialogOk);
-        Button dismiss = (Button) dialog.findViewById(R.id.buttonDialogCancel);
+        final EditText howMuch = (EditText) mDialog.findViewById(R.id.editTextAmount);
+        final EditText what = (EditText) mDialog.findViewById(R.id.editTextWhat);
+        final Spinner spinnerWhat = (Spinner) mDialog.findViewById(R.id.spinnerWhat);
+        final EditText where = (EditText) mDialog.findViewById(R.id.editTextWhere);
+        final EditText comment = (EditText) mDialog.findViewById(R.id.editTextComment);
+        Button ok = (Button) mDialog.findViewById(R.id.buttonDialogOk);
+        Button dismiss = (Button) mDialog.findViewById(R.id.buttonDialogCancel);
         setSpinnerAdapter(spinnerWhat);
-        dialog.setTitle("New Expense");
+        mDialog.setTitle("New Expense");
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                if (what.getText().toString().equals("") && howMuch.getText().toString().equals("")){
-                if (howMuch.getText().toString().equals("")){
+                Boolean isOther = what.getVisibility() == View.VISIBLE;
+
+                if (isOther) {
+                    if (what.getText().toString().equals("")) {
+                        Toast.makeText(MainActivity.this, "Please enter the expense's kind...", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } else if (spinnerWhat.getPrompt().equals(getString(R.string.pick_a_category))) {
+                    Toast.makeText(MainActivity.this, "Please choose a category", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (howMuch.getText().toString().equals("")) {
                     Toast.makeText(MainActivity.this, "Please enter an amount...", Toast.LENGTH_SHORT).show();
-                }else {
-                    String name = spinnerWhat.getPrompt().toString();
+                } else {
+                    String name = null;
+                    if (isOther) {
+                        name = what.getText().toString();
+                        updateCategoriesSP(name);
+                    } else {
+                        name = spinnerWhat.getPrompt().toString();
+                    }
                     String place = where.getText().toString();
                     String comments = comment.getText().toString();
                     int amount = Integer.valueOf(howMuch.getText().toString());
@@ -131,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                     DBHelper mDbHelper = new DBHelper(MainActivity.this);
 
                     mDbHelper.insertExpense(newExpense);
-                    dialog.dismiss();
+                    mDialog.dismiss();
 
                     //refresh the Total Expenses TextView:
                     mMainFragment.updateTotalExpenses();
@@ -145,25 +183,41 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         dismiss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                mDialog.dismiss();
             }
         });
 
-        dialog.show();
+        mDialog.show();
 
     }
 
-    private void setSpinnerAdapter(Spinner spinnerWhat) {
-        Set<String> categoriesSet = mSharedPreferences.getStringSet(CATEGORIES, null);
-        if (categoriesSet!=null) {
-            List<CharSequence> categoriesList = new ArrayList(categoriesSet);
-            ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(getApplicationContext(), android.R.layout.simple_spinner_item, categoriesList);
+    private void updateCategoriesSP(String name) {
+        mSharedPreferences = getSharedPreferences("Categories", 0);
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        mCategoriesSet.add(name);
+        editor.putStringSet(CATEGORIES, mCategoriesSet);
+        editor.apply();
+    }
 
+    private void setSpinnerAdapter(final Spinner spinnerWhat) {
+        mCategoriesSet = mSharedPreferences.getStringSet(CATEGORIES, null);
+        if (mCategoriesSet != null) {
+            mCategoriesList = new ArrayList(mCategoriesSet);
+            mCategoriesList.add(getString(R.string.otherCategory));
+            mCategoriesList.add(getString(R.string.pick_a_category));
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, categoriesList);
+            SpinnerAdapter adapter = new SpinnerAdapter(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, mCategoriesList);
             spinnerWhat.setAdapter(adapter);
+            spinnerWhat.setSelection(adapter.getCount());
             spinnerWhat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                    if (parent.getItemAtPosition(position).toString().equals(getString(R.string.otherCategory))) {
+                        EditText what = (EditText) mDialog.findViewById(R.id.editTextWhat);
+                        what.setVisibility(View.VISIBLE);
+                        spinnerWhat.setVisibility(View.GONE);
+                    }
+                    spinnerWhat.setPrompt(parent.getItemAtPosition(position).toString());
                 }
 
                 @Override
@@ -174,18 +228,26 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         }
     }
 
-    public void showDialogEditExpense(final Expense expense){
+    public void showDialogEditExpense(final Expense expense) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_add_expense);
 
         final EditText howMuch = (EditText) dialog.findViewById(R.id.editTextAmount);
-//        final EditText what = (EditText) dialog.findViewById(R.id.editTextWhat);
+        final EditText what = (EditText) dialog.findViewById(R.id.editTextWhat);
+        final Spinner spinnerWhat = (Spinner) dialog.findViewById(R.id.spinnerWhat);
         final EditText where = (EditText) dialog.findViewById(R.id.editTextWhere);
         final EditText comment = (EditText) dialog.findViewById(R.id.editTextComment);
         Button ok = (Button) dialog.findViewById(R.id.buttonDialogOk);
         Button dismiss = (Button) dialog.findViewById(R.id.buttonDialogCancel);
+        setSpinnerAdapter(spinnerWhat);
 
-        howMuch.setText(expense.getAmount()+"");
+        for (int i = 0; i < mCategoriesList.size(); i++) {
+            if (mCategoriesList.get(i).equals(expense.getName())) {
+                spinnerWhat.setSelection(i);
+                break;
+            }
+        }
+        howMuch.setText(String.valueOf(expense.getAmount()));
 //        what.setText(expense.getName());
         where.setText(expense.getPlace());
         comment.setText(expense.getComment());
@@ -194,20 +256,48 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (howMuch.getText().toString().equals("")){
-                    Toast.makeText(MainActivity.this, "Please enter a name and an amount...", Toast.LENGTH_SHORT).show();
-                }else {
-//                    String name = what.getText().toString();
+//                if (howMuch.getText().toString().equals("")){
+//                    Toast.makeText(MainActivity.this, "Please enter a name and an amount...", Toast.LENGTH_SHORT).show();
+//                }else {
+////                    String name = what.getText().toString();
+//                    String place = where.getText().toString();
+//                    String comments = comment.getText().toString();
+//                    int amount = Integer.valueOf(howMuch.getText().toString());
+////                    long time = Calendar.getInstance().getTimeInMillis();
+//                    long time = expense.getTime();
+//
+//                    Expense editExpense = new Expense(expense.getId(),"name", place, comments, time, amount);
+//                    DBHelper dbHelper = new DBHelper(MainActivity.this);
+                Boolean isOther = what.getVisibility() == View.VISIBLE;
+
+                if (isOther) {
+                    if (what.getText().toString().equals("")) {
+                        Toast.makeText(MainActivity.this, "Please enter the expense's kind...", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } else if (spinnerWhat.getPrompt().equals(getString(R.string.pick_a_category))) {
+                    Toast.makeText(MainActivity.this, "Please choose a category", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (howMuch.getText().toString().equals("")) {
+                    Toast.makeText(MainActivity.this, "Please enter an amount...", Toast.LENGTH_SHORT).show();
+                } else {
+                    long uid = expense.getId();
+                    String name = null;
+                    if (isOther) {
+                        name = what.getText().toString();
+                        updateCategoriesSP(name);
+                    } else {
+                        name = spinnerWhat.getPrompt().toString();
+                    }
                     String place = where.getText().toString();
                     String comments = comment.getText().toString();
                     int amount = Integer.valueOf(howMuch.getText().toString());
-//                    long time = Calendar.getInstance().getTimeInMillis();
-                    long time = expense.getTime();
+                    long time = Calendar.getInstance().getTimeInMillis();
+                    Expense editExpense = new Expense(uid, name, place, comments, time, amount);
+                    DBHelper mDbHelper = new DBHelper(MainActivity.this);
 
-                    Expense editExpense = new Expense(expense.getId(),"name", place, comments, time, amount);
-                    DBHelper dbHelper = new DBHelper(MainActivity.this);
-
-                    dbHelper.updateExpense(editExpense);
+                    mDbHelper.updateExpense(editExpense);
                     dialog.dismiss();
 
                     //refresh the Total Expenses TextView:

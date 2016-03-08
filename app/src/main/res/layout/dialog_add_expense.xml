@@ -1,93 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
 
-    <FrameLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/frame">
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp">
+
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+            <!--android:id="@+id/textViewDialogTitle"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:layout_marginStart="10dp"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:layout_marginEnd="10dp" />-->
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/frame"
+            android:paddingBottom="20dp">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/editTextWhat"
+                android:hint="@string/category"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"
+                android:singleLine="true" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="60sp"
+                android:id="@+id/spinnerWhat"
+                android:layout_gravity="center_horizontal"
+                android:spinnerMode="dropdown"
+                android:focusable="true"
+                android:visibility="visible"
+                android:requiresFadingEdge="vertical"
+                android:fadingEdgeLength="10dp"/>
+        </FrameLayout>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editTextWhat"
-            android:hint="For what?"
-            android:layout_gravity="center_horizontal"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:visibility="gone"/>
+            android:inputType="number"
+            android:maxLength="6"
+            android:textAlignment="viewStart"
+            android:id="@+id/editTextAmount"
+            android:hint="@string/how_much" />
 
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:id="@+id/spinnerWhat"
-            android:layout_gravity="center_horizontal"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:spinnerMode="dropdown" />
-    </FrameLayout>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:id="@+id/editTextAmount"
-        android:hint="How much?"
-        android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/frame"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextWhere"
-        android:hint="Where?"
-        android:layout_below="@+id/editTextAmount"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextComment"
-        android:hint="Any thoughts?"
-        android:layout_below="@+id/editTextWhere"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/linearLayout"
-        android:layout_below="@+id/editTextWhere"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="44dp">
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cancel"
-            android:id="@+id/buttonDialogCancel"
-            android:layout_weight="1" />
+            android:id="@+id/editTextWhere"
+            android:hint="@string/where"
+            android:singleLine="true" />
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="OK"
-            android:id="@+id/buttonDialogOk"
-            android:layout_weight="1" />
+            android:id="@+id/editTextComment"
+            android:hint="@string/comments"
+            android:singleLine="true"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/linearLayout"
+            android:layoutDirection="ltr">
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_expense_cancel"
+                android:id="@+id/buttonDialogCancel"
+                android:layout_weight="1" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_expense_save"
+                android:id="@+id/buttonDialogOk"
+                android:layout_weight="1" />
+        </LinearLayout>
     </LinearLayout>
-
 
 
 </RelativeLayout>

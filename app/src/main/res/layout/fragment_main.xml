@@ -22,15 +22,18 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/total_expenses"
-            android:id="@+id/textViewExpensesText" />
+            android:id="@+id/textViewExpensesText"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="0"
+            android:text="@string/_0"
             android:id="@+id/textViewExpenses"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
@@ -39,6 +42,8 @@
         android:id="@+id/recyclerViewExpenses"
         android:layout_below="@+id/linearLayoutTotal"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:fadingEdgeLength="20dp"
+        android:requiresFadingEdge="vertical"/>
 
 </RelativeLayout>

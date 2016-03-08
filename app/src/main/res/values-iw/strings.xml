@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cash</string>
+    <string name="Toast_choose_category">שכחת לבחור קטגוריה</string>
+    <string name="Toast_enter_amount">שכחת לציין סכום</string>
+    <string name="Toast_enter_expense_kind">בחרת ליצור קטגוריה חדשה אך לא הכנסת שם</string>
+    <string name="action_clear">נקה את כל ההוצאות</string>
+    <string name="action_settings">הגדרות</string>
+    <string name="all_expenses_cleared">כל ההוצאות נוקו מהזיכרון</string>
+    <string name="category">קטגוריה</string>
+    <string name="clear_all_expenses">לנקות את כל ההוצאות?</string>
+    <string name="clear_it">נקה</string>
+    <string name="comments">הערות?</string>
+    <string name="def_cat_eating_out">אוכל בחוץ</string>
+    <string name="def_cat_gas">דלק</string>
+    <string name="def_cat_groceries">מצרכים</string>
+    <string name="def_cat_public_transportation">תחבורה ציבורית</string>
+    <string name="dialog_expense_cancel">בטל</string>
+    <string name="dialog_expense_save">שמור</string>
+    <string name="dialog_title_edit_expense">עריכת הוצאה</string>
+    <string name="dont_do_it_man">קבל ביטול</string>
+    <string name="how_much">כמה?</string>
+    <string name="otherCategory">הוסף חדש...</string>
+    <string name="remove_it">הסר</string>
+    <string name="remove_this_expense">להסיר הוצאה זאת?</string>
+    <string name="snackBar_expense_updated">ההוצאה עודכנה!</string>
+    <string name="snackBar_new_expense_added">הוצאה חדשה נוספה!</string>
+    <string name="total_expenses">סך הוצאות החודש:</string>
+    <string name="undo">בטל</string>
+    <string name="where">איפה?</string>
+    <string name="dialog_title_new_expense">הוצאה חדשה</string>
+    <string name="pick_a_category">בחר קטגוריה</string>
+</resources>

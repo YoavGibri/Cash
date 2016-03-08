@@ -2,11 +2,36 @@
     <string name="app_name">Cash</string>
     <string name="action_settings">Settings</string>
     <string name="total_expenses">Total this month:</string>
-    <string name="total_income">Total income this month:</string>
-    <string name="currency_mark">₪</string>
+    <string name="total_income" translatable="false">Total income this month:</string>
+    <string name="currency_mark" translatable="false">₪</string>
     <string name="action_clear">Clear all expenses</string>
-    <string name="prompt">prompting</string>
+    <string name="prompt" translatable="false">prompting</string>
     <string name="pick_a_category">pick a category</string>
-    <string name="otherCategory">Other...</string>
+    <string name="otherCategory">Add New...</string>
+    <string name="remove_this_expense">Remove this expense?</string>
+    <string name="remove_it">Remove it</string>
+    <string name="dont_do_it_man">Don\'t do it man!</string>
+    <string name="def_cat_groceries">Groceries</string>
+    <string name="def_cat_eating_out">Eating out</string>
+    <string name="def_cat_gas">Gas</string>
+    <string name="def_cat_public_transportation">Public transportation</string>
+    <string name="clear_all_expenses">Clear all expenses?</string>
+    <string name="clear_it">Clear it</string>
+    <string name="all_expenses_cleared">all expenses had been cleared</string>
+    <string name="Toast_enter_expense_kind">Please enter the expense\'s kind</string>
+    <string name="Toast_choose_category">Please choose a category</string>
+    <string name="Toast_enter_amount">Please enter an amount</string>
+    <string name="snackBar_new_expense_added">A new Expense has been added!</string>
+    <string name="undo">Undo</string>
+    <string name="dialog_title_edit_expense">Edit Expense</string>
+    <string name="snackBar_expense_updated">The expense was updated!</string>
+    <string name="_0" translatable="false">0</string>
+    <string name="category">Category</string>
+    <string name="how_much">How much?</string>
+    <string name="where">Where?</string>
+    <string name="comments">Comments?</string>
+    <string name="dialog_expense_save">save</string>
+    <string name="dialog_expense_cancel">Cancel</string>
+    <string name="dialog_title_new_expense">New Expense</string>
 
 </resources>

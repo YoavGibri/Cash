@@ -9,14 +9,16 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yoavgibri.cash.DataBase.DBHelper;
@@ -35,14 +37,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     private FloatingActionButton mFab;
     private DBHelper helper = new DBHelper(this);
     private MainActivityFragment mMainFragment;
-    private SharedPreferences mSharedPreferences;
     private Dialog mDialog;
-    private Set<String> mCategoriesSet;
     private List<String> mCategoriesList;
+    private Spinner mSpinnerWhat;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -54,21 +55,20 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             @Override
             public void onClick(View view) {
                 showDialogNewExpense();
-//                  showDialogNewExpense();
+                mSpinnerWhat.performClick();
             }
         });
     }
 
     private void startPreferencesIfNotExist() {
-        mSharedPreferences = getSharedPreferences("Categories", 0);
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        if (!mSharedPreferences.contains(CATEGORIES)) {
-            Set<String> set = new HashSet<>();
-            set.add("מצרכים");
-            set.add("אוכל ושתיה בחוץ");
-            set.add("דלק");
-            set.add("תחבורה ציבורית");
-            editor.putStringSet(CATEGORIES, set);
+        SharedPreferences sharedPreferences = getSharedPreferences(CATEGORIES, 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        if (!sharedPreferences.contains("1")) {
+            editor.putString("1", getString(R.string.def_cat_groceries));
+            editor.putString("2", getString(R.string.def_cat_eating_out));
+            editor.putString("3", getString(R.string.def_cat_gas));
+            editor.putString("4", getString(R.string.def_cat_public_transportation));
             editor.apply();
         }
     }
@@ -89,14 +89,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 //                return true;
             case R.id.action_clear_all_expenses:
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
-                        .setTitle("Clear all expenses?")
-                        .setPositiveButton("Clear it", new DialogInterface.OnClickListener() {
+                        .setTitle(getString(R.string.clear_all_expenses))
+                        .setPositiveButton(getString(R.string.clear_it), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 helper.clearAllExpenses();
                                 mMainFragment.updateRecycler();
                                 mMainFragment.updateTotalExpenses();
-                                Snackbar.make(mFab, "all expenses had been cleared", Snackbar.LENGTH_INDEFINITE)
+                                Snackbar.make(mFab, R.string.all_expenses_cleared, Snackbar.LENGTH_INDEFINITE)
 //                                        .setAction("UNDO", new View.OnClickListener() {
 //                                            @Override
 //                                            public void onClick(View v) {
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                                         .show();
                             }
                         })
-                        .setNegativeButton("Don't do it man!", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(getString(R.string.dont_do_it_man), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                             }
@@ -126,15 +126,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         mDialog = new Dialog(this);
         mDialog.setContentView(R.layout.dialog_add_expense);
 
+//        TextView title = (TextView) mDialog.findViewById(R.id.textViewDialogTitle);
+//        title.setText(R.string.dialog_title_new_expense);
+        mSpinnerWhat = (Spinner) mDialog.findViewById(R.id.spinnerWhat);
         final EditText howMuch = (EditText) mDialog.findViewById(R.id.editTextAmount);
         final EditText what = (EditText) mDialog.findViewById(R.id.editTextWhat);
-        final Spinner spinnerWhat = (Spinner) mDialog.findViewById(R.id.spinnerWhat);
         final EditText where = (EditText) mDialog.findViewById(R.id.editTextWhere);
         final EditText comment = (EditText) mDialog.findViewById(R.id.editTextComment);
-        Button ok = (Button) mDialog.findViewById(R.id.buttonDialogOk);
+        final Button ok = (Button) mDialog.findViewById(R.id.buttonDialogOk);
         Button dismiss = (Button) mDialog.findViewById(R.id.buttonDialogCancel);
-        setSpinnerAdapter(spinnerWhat);
-        mDialog.setTitle("New Expense");
+        setSpinnerAdapter(mSpinnerWhat);
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,22 +144,22 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
                 if (isOther) {
                     if (what.getText().toString().equals("")) {
-                        Toast.makeText(MainActivity.this, "Please enter the expense's kind...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, R.string.Toast_enter_expense_kind, Toast.LENGTH_SHORT).show();
                         return;
                     }
-                } else if (spinnerWhat.getPrompt().equals(getString(R.string.pick_a_category))) {
-                    Toast.makeText(MainActivity.this, "Please choose a category", Toast.LENGTH_SHORT).show();
+                } else if (mSpinnerWhat.getPrompt().equals(getString(R.string.pick_a_category))) {
+                    Toast.makeText(MainActivity.this, R.string.Toast_choose_category, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (howMuch.getText().toString().equals("")) {
-                    Toast.makeText(MainActivity.this, "Please enter an amount...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.Toast_enter_amount, Toast.LENGTH_SHORT).show();
                 } else {
                     String name = null;
                     if (isOther) {
                         name = what.getText().toString();
                         updateCategoriesSP(name);
                     } else {
-                        name = spinnerWhat.getPrompt().toString();
+                        name = mSpinnerWhat.getPrompt().toString();
                     }
                     String place = where.getText().toString();
                     String comments = comment.getText().toString();
@@ -175,8 +176,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                     mMainFragment.updateTotalExpenses();
                     mMainFragment.updateRecycler();
 
-                    Snackbar.make(mFab, "A new Expense has been added!", Snackbar.LENGTH_LONG)
-                            .setAction("Undo", null).show();
+                    Snackbar.make(mFab, R.string.snackBar_new_expense_added, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.undo, null).show();
                 }
             }
         });
@@ -186,59 +187,88 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                 mDialog.dismiss();
             }
         });
-
+        comment.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId== EditorInfo.IME_ACTION_DONE){
+                    ok.performClick();
+                }
+                return false;
+            }
+        });
         mDialog.show();
-
     }
 
     private void updateCategoriesSP(String name) {
-        mSharedPreferences = getSharedPreferences("Categories", 0);
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        mCategoriesSet.add(name);
-        editor.putStringSet(CATEGORIES, mCategoriesSet);
+        SharedPreferences sharedPreferences = getSharedPreferences(CATEGORIES, 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        mCategoriesList.add(0, name);
+        mCategoriesList.remove(getString(R.string.otherCategory));
+        mCategoriesList.remove(getString(R.string.pick_a_category));
+        mCategoriesList.add(name);
+
+        int i = 1;
+        for (String cat : mCategoriesList) {
+            editor.putString(String.valueOf(i), cat);
+            i++;
+        }
         editor.apply();
     }
 
     private void setSpinnerAdapter(final Spinner spinnerWhat) {
-        mCategoriesSet = mSharedPreferences.getStringSet(CATEGORIES, null);
-        if (mCategoriesSet != null) {
-            mCategoriesList = new ArrayList(mCategoriesSet);
-            mCategoriesList.add(getString(R.string.otherCategory));
-            mCategoriesList.add(getString(R.string.pick_a_category));
-//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, categoriesList);
-            SpinnerAdapter adapter = new SpinnerAdapter(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, mCategoriesList);
-            spinnerWhat.setAdapter(adapter);
-            spinnerWhat.setSelection(adapter.getCount());
-            spinnerWhat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (parent.getItemAtPosition(position).toString().equals(getString(R.string.otherCategory))) {
-                        EditText what = (EditText) mDialog.findViewById(R.id.editTextWhat);
-                        what.setVisibility(View.VISIBLE);
-                        spinnerWhat.setVisibility(View.GONE);
-                    }
-                    spinnerWhat.setPrompt(parent.getItemAtPosition(position).toString());
-                }
+        getCategoriesList();
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
+        SpinnerAdapter adapter = new SpinnerAdapter(MainActivity.this, R.layout.item_categories, mCategoriesList);
+        spinnerWhat.setAdapter(adapter);
+        spinnerWhat.setSelection(adapter.getCount());
+        spinnerWhat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (parent.getItemAtPosition(position).toString().equals(getString(R.string.otherCategory))) {
+                    EditText what = (EditText) mDialog.findViewById(R.id.editTextWhat);
+                    what.setVisibility(View.VISIBLE);
+                    spinnerWhat.setVisibility(View.GONE);
                 }
-            });
-        }
+                spinnerWhat.setPrompt(parent.getItemAtPosition(position).toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
-    public void showDialogEditExpense(final Expense expense) {
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_add_expense);
+    private void getCategoriesList() {
+        mCategoriesList = new ArrayList<String>();
+        SharedPreferences sharedPreferences = getSharedPreferences(CATEGORIES, 0);
+        int i = 1;
+        String category;
+        do {
+            category = sharedPreferences.getString(String.valueOf(i), "");
+            if (!category.equals("")){
+                mCategoriesList.add(category);
+            }
+            i++;
+        } while (!category.equals(""));
+        mCategoriesList.add(getString(R.string.otherCategory));
+        mCategoriesList.add(getString(R.string.pick_a_category));
+    }
 
-        final EditText howMuch = (EditText) dialog.findViewById(R.id.editTextAmount);
-        final EditText what = (EditText) dialog.findViewById(R.id.editTextWhat);
-        final Spinner spinnerWhat = (Spinner) dialog.findViewById(R.id.spinnerWhat);
-        final EditText where = (EditText) dialog.findViewById(R.id.editTextWhere);
-        final EditText comment = (EditText) dialog.findViewById(R.id.editTextComment);
-        Button ok = (Button) dialog.findViewById(R.id.buttonDialogOk);
-        Button dismiss = (Button) dialog.findViewById(R.id.buttonDialogCancel);
+
+    public void showDialogEditExpense(final Expense expense) {
+        mDialog = new Dialog(this);
+        mDialog.setContentView(R.layout.dialog_add_expense);
+//        TextView title = (TextView) dialog.findViewById(R.id.textViewDialogTitle);
+//        title.setText(R.string.dialog_title_edit_expense);
+
+        final EditText howMuch = (EditText) mDialog.findViewById(R.id.editTextAmount);
+        final EditText what = (EditText) mDialog.findViewById(R.id.editTextWhat);
+        final Spinner spinnerWhat = (Spinner) mDialog.findViewById(R.id.spinnerWhat);
+        final EditText where = (EditText) mDialog.findViewById(R.id.editTextWhere);
+        final EditText comment = (EditText) mDialog.findViewById(R.id.editTextComment);
+        Button ok = (Button) mDialog.findViewById(R.id.buttonDialogOk);
+        Button dismiss = (Button) mDialog.findViewById(R.id.buttonDialogCancel);
         setSpinnerAdapter(spinnerWhat);
 
         for (int i = 0; i < mCategoriesList.size(); i++) {
@@ -252,7 +282,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         where.setText(expense.getPlace());
         comment.setText(expense.getComment());
 
-        dialog.setTitle("Edit Expense");
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -272,15 +301,15 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
                 if (isOther) {
                     if (what.getText().toString().equals("")) {
-                        Toast.makeText(MainActivity.this, "Please enter the expense's kind...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, getString(R.string.Toast_enter_expense_kind), Toast.LENGTH_SHORT).show();
                         return;
                     }
                 } else if (spinnerWhat.getPrompt().equals(getString(R.string.pick_a_category))) {
-                    Toast.makeText(MainActivity.this, "Please choose a category", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.Toast_choose_category), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (howMuch.getText().toString().equals("")) {
-                    Toast.makeText(MainActivity.this, "Please enter an amount...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.Toast_enter_amount), Toast.LENGTH_SHORT).show();
                 } else {
                     long uid = expense.getId();
                     String name = null;
@@ -298,30 +327,38 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                     DBHelper mDbHelper = new DBHelper(MainActivity.this);
 
                     mDbHelper.updateExpense(editExpense);
-                    dialog.dismiss();
+                    mDialog.dismiss();
 
                     //refresh the Total Expenses TextView:
                     mMainFragment.updateTotalExpenses();
                     mMainFragment.updateRecycler();
 
-                    Snackbar.make(mFab, "A new Expense has been added!", Snackbar.LENGTH_LONG)
-                            .setAction("Undo", null).show();
+                    Snackbar.make(mFab, R.string.snackBar_expense_updated, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.undo, null).show();
                 }
             }
         });
         dismiss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                mDialog.dismiss();
             }
         });
 
-        dialog.show();
+        mDialog.show();
 
     }
 
     @Override
     public void OnExpenseClick(long id) {
         showDialogEditExpense(helper.getExpense(id));
+    }
+
+    @Override
+    protected void onPause() {
+        if (mDialog!=null){
+            mDialog.dismiss();
+        }
+        super.onPause();
     }
 }

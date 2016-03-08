@@ -73,8 +73,8 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
                 Expense expense = mAdapter.expenses.get(position);
                 final long uId = expense.getId();
                 AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                        .setTitle("Delete this expense?")
-                        .setPositiveButton("Delete it", new DialogInterface.OnClickListener() {
+                        .setTitle(getString(R.string.remove_this_expense))
+                        .setPositiveButton(getString(R.string.remove_it), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 mAdapter.remove(position);
@@ -82,7 +82,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
                                 updateTotalExpenses();
                             }
                         })
-                        .setNegativeButton("Don't do it man!", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(getString(R.string.dont_do_it_man), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 updateRecycler();

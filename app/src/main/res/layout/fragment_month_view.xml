@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.yoavgibri.cash.MonthViewFragment">
+
+    <TextView
+        android:id="@+id/monthViewDate"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="03/2016"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_weight="0.3"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="2">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/listViewCategories"
+            android:layout_weight="2" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/PieChart"
+            android:layout_weight="1">
+
+        </com.github.mikephil.charting.charts.PieChart>
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/RecyclerViewDetailed"
+        android:layout_weight="2" />
+
+
+</LinearLayout>

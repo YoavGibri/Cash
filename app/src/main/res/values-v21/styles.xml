@@ -5,6 +5,8 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="colorPrimaryDark">@color/bright_foreground_material_light</item>
+        <item name="colorAccent">@android:color/holo_red_light</item>
 
     </style>
 </resources>

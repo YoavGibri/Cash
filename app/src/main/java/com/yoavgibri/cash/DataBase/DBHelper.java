@@ -19,7 +19,7 @@ import java.util.Calendar;
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String TAG = "DBHelper";
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
     public static final String DB_NAME = "cash";
     public static final String TABLE_NAME = "expenses";
     public static final String COL_UID = "_id";
@@ -28,9 +28,12 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COL_AMOUNT = "amount";
     public static final String COL_PLACE = "place";
     public static final String COL_COMMENT = "comment";
+    public static final String COL_TYPE = "type";
+    public static final String COL_MONTH = "month";
 
-    SQLiteDatabase mDb;
-    ArrayList<Expense> mTempArray;
+    private SQLiteDatabase mDb;
+    private ArrayList<Expense> mTempArray;
+
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -40,30 +43,62 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sqlCreate = String.format("CREATE TABLE %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, %3$s DOUBLE, %4$s TEXT, %5$s DOUBLE, %6$s TEXT, %7$s TEXT)",
-                TABLE_NAME, COL_UID, COL_TIME, COL_NAME, COL_AMOUNT, COL_PLACE, COL_COMMENT);
-        Log.d(TAG, sqlCreate);
+        //Version 1:
+//        String sqlCreate = String.format("CREATE TABLE %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, %3$s DOUBLE, %4$s TEXT, %5$s DOUBLE, %6$s TEXT, %7$s TEXT)",
+//                TABLE_NAME, COL_UID, COL_TIME, COL_NAME, COL_AMOUNT, COL_PLACE, COL_COMMENT);
 
+        //Version 2:
+        String sqlCreate = String.format("CREATE TABLE %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, %3$s DOUBLE, %4$s TEXT, %5$s DOUBLE, %6$s TEXT, %7$s TEXT, %8$s DOUBLE)",
+                TABLE_NAME, COL_UID, COL_TIME, COL_TYPE, COL_AMOUNT, COL_PLACE, COL_COMMENT, COL_MONTH);
         db.execSQL(sqlCreate);
+
+        Log.d(TAG, sqlCreate);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String sqlUpgrade = "DROP TABLE IS EXIST " + TABLE_NAME;
-        Log.d(TAG, "DB version has changed from " + oldVersion + "to " + oldVersion);
+        int upgradeTo = oldVersion + 1;
 
-        db.execSQL(sqlUpgrade);
+        while (upgradeTo <= newVersion){
+            switch (upgradeTo){
+                case 2:
+                    db.execSQL("BEGIN TRANSACTION");
+                    db.execSQL("ALTER TABLE "+TABLE_NAME+" RENAME TO tempTable");
+                    db.execSQL(String.format("CREATE TABLE %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, %3$s DOUBLE, %4$s TEXT, %5$s DOUBLE, %6$s TEXT, %7$s TEXT, %8$s DOUBLE)",
+                            TABLE_NAME, COL_UID, COL_TIME, COL_TYPE, COL_AMOUNT, COL_PLACE, COL_COMMENT, COL_MONTH));
+                    db.execSQL("INSERT INTO "+TABLE_NAME+"("+COL_UID+", "+COL_TIME+", "+COL_TYPE+", "+COL_AMOUNT+", "+COL_PLACE+", "+COL_COMMENT+") " +
+                            "SELECT "+COL_UID+", "+COL_TIME+", "+COL_NAME+", "+COL_AMOUNT+", "+COL_PLACE+", "+COL_COMMENT+" " +
+                            "FROM tempTable");
+                    db.execSQL("DROP TABLE tempTable");
+                    db.execSQL("COMMIT");
+                    break;
+                case 3:
+                    // do something
+                    break;
+                case 4:
+                    // do something
+                    break;
+            }
+            upgradeTo++;
+        }
+
+//        String sqlUpgrade = "DROP TABLE IF EXIST " + TABLE_NAME;
+//        db.execSQL(sqlUpgrade);
+//        onCreate(db);
+
+        Log.d(TAG, "DB version changing from " + oldVersion + " to " + newVersion);
     }
 
 
     public void insertExpense(Expense newExpense) {
         mDb = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COL_NAME, newExpense.getName());
+        values.put(COL_TYPE, newExpense.getName());
         values.put(COL_AMOUNT, newExpense.getAmount());
         values.put(COL_PLACE, newExpense.getPlace());
         values.put(COL_TIME, newExpense.getTime());
         values.put(COL_COMMENT, newExpense.getComment());
+        values.put(COL_MONTH, newExpense.getMonth());
 
         mDb.insertOrThrow(TABLE_NAME, null, values);
         mDb.close();
@@ -83,6 +118,44 @@ public class DBHelper extends SQLiteOpenHelper {
         c.close();
 
         return totalExpenses;
+    }
+
+
+
+//    public ArrayList<Integer> getMonths(){
+//        mDb = getReadableDatabase();
+//        Cursor c = mDb.query(TABLE_NAME, new String[]{COL_MONTH}, null, null, null, null, null);
+//        ArrayList<Integer> months = new ArrayList<>();
+//
+//        while (c.moveToNext()){
+//            if (!months.contains(c.getInt(c.getColumnIndex(COL_MONTH))))
+//            months.add(c.getInt(c.getColumnIndex(COL_MONTH)));
+//        }
+//        c.close();
+//        return months;
+//    }
+
+    public Cursor getTotalsByMonth() {
+        mDb = getReadableDatabase();
+        return mDb.query(TABLE_NAME, new String[]{COL_MONTH, "SUM("+COL_AMOUNT+")"}, null, null, COL_MONTH, null, COL_MONTH);
+    }
+
+    public Cursor getMonthTotalsByType(String month){
+        mDb = getReadableDatabase();
+        return mDb.query(TABLE_NAME, new String[]{COL_TYPE, "SUM("+COL_AMOUNT+")"}, COL_MONTH+"="+month, null, COL_TYPE, null, COL_TYPE);
+    }
+
+    public ArrayList<Expense> getExpensesByMonth(String month){
+        mDb = getReadableDatabase();
+        ArrayList<Expense> expenses = new ArrayList<>();
+
+        Cursor c = mDb.query(TABLE_NAME, null, COL_MONTH+"="+month, null, null, null, null, null);
+        while (c.moveToNext()){
+            Expense expense = expenseFromCursor(c);
+            expenses.add(expense);
+        }
+        c.close();
+        return expenses;
     }
 
     private long getThisMonthStart() {
@@ -122,7 +195,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void updateExpense(Expense editExpense) {
         mDb = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COL_NAME, editExpense.getName());
+        values.put(COL_TYPE, editExpense.getName());
         values.put(COL_AMOUNT, editExpense.getAmount());
         values.put(COL_PLACE, editExpense.getPlace());
         values.put(COL_TIME, editExpense.getTime());
@@ -135,7 +208,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @NonNull
     private Expense expenseFromCursor(Cursor c) {
-        String name = c.getString(c.getColumnIndex(COL_NAME));
+        String name = c.getString(c.getColumnIndex(COL_TYPE));
         String place = c.getString(c.getColumnIndex(COL_PLACE));
         String comment = c.getString(c.getColumnIndex(COL_COMMENT));
         long time = c.getLong(c.getColumnIndex(COL_TIME));
@@ -143,6 +216,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Expense expense = new Expense(name, place, comment, time, amount);
         expense.setId(c.getLong(c.getColumnIndex(COL_UID)));
+
         return expense;
     }
 
@@ -161,5 +235,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Expense> getTempArray() {
         return mTempArray;
     }
+
 
 }

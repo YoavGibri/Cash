@@ -2,6 +2,8 @@ package com.yoavgibri.cash;
 
 import android.support.annotation.Nullable;
 
+import java.util.Calendar;
+
 /**
  * Created by Yoav on 19/02/16.
  */
@@ -9,7 +11,7 @@ import android.support.annotation.Nullable;
 public class Expense {
     private String name, place, comment;
     private long time, _id;
-    private int amount;
+    private int amount, month;
 
     public Expense() {
     }
@@ -21,6 +23,7 @@ public class Expense {
         this.comment = comment;
         this.time = time;
         this.amount = amount;
+        this.month = getMonth(time);
     }
 
     public Expense(String name, String place, String comment, long time, int amount) {
@@ -29,8 +32,17 @@ public class Expense {
         this.comment = comment;
         this.time = time;
         this.amount = amount;
+        this.month = getMonth(time);
+
     }
 
+    private int getMonth(long time) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(time);
+        int yy = c.get(Calendar.YEAR);
+        int mm = c.get(Calendar.MONTH);
+        return ((yy-2000)*100 + mm) +1;
+    }
     @Override
     public String toString() {
         return time+"- "+name+", "+amount+", "+place;
@@ -83,5 +95,10 @@ public class Expense {
     public void setId(long _id) {
         this._id = _id;
     }
+
+    public int getMonth() {
+        return month;
+    }
+
 }
 

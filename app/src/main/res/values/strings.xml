@@ -34,4 +34,8 @@
     <string name="dialog_expense_cancel">Cancel</string>
     <string name="dialog_title_new_expense">New Expense</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="action_menu_analytics">analytics</string>
+
 </resources>

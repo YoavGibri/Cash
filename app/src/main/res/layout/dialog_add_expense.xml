@@ -59,12 +59,33 @@
             android:id="@+id/editTextAmount"
             android:hint="@string/how_much" />
 
-        <EditText
+        <RelativeLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/editTextWhere"
-            android:hint="@string/where"
-            android:singleLine="true" />
+            android:layout_height="match_parent">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/editTextWhere"
+                android:hint="@string/where"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="7dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="pick"
+                android:id="@+id/buttonPlacePicker"
+                android:layout_weight="1"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
 
         <EditText
             android:layout_width="match_parent"
@@ -73,7 +94,7 @@
             android:hint="@string/comments"
             android:singleLine="true"/>
 
-        <LinearLayout
+        <RelativeLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,21 +103,27 @@
             android:layoutDirection="ltr">
 
             <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/dialog_expense_cancel"
-                android:id="@+id/buttonDialogCancel"
-                android:layout_weight="1" />
-
-            <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="match_parent"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/dialog_expense_save"
                 android:id="@+id/buttonDialogOk"
-                android:layout_weight="1" />
-        </LinearLayout>
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="0dp" />
+
+            <Button
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_expense_cancel"
+                android:id="@+id/buttonDialogCancel"
+
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@+id/buttonDialogOk"
+                android:layout_toStartOf="@+id/buttonDialogOk" />
+
+        </RelativeLayout>
     </LinearLayout>
 
 

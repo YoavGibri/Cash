@@ -2,6 +2,7 @@ package com.yoavgibri.cash;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +29,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Delayed;
 
 
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.OnExpenseClickListener {
@@ -55,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             @Override
             public void onClick(View view) {
                 showDialogNewExpense();
-                mSpinnerWhat.performClick();
             }
         });
     }
@@ -112,7 +113,11 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                             }
                         })
                         .show();
+                return true;
 
+            case R.id.action_go_to_analytics:
+                Intent analyticsIntent = new Intent(this, AnalyticsActivity.class);
+                startActivity(analyticsIntent);
                 return true;
 //            case R.id.action_dummy_content:
 //                mMainFragment.loadDummyContent();
@@ -197,6 +202,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             }
         });
         mDialog.show();
+
+//        mSpinnerWhat.performClick();
     }
 
     private void updateCategoriesSP(String name) {
@@ -346,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         });
 
         mDialog.show();
-
     }
 
     @Override

@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Expense name"
+            android:text="שם הוצאה"
             android:id="@+id/textView_Item_Name"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
@@ -21,7 +21,8 @@
             android:textStyle="bold"
             android:ellipsize="end"
             android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp" />
+            android:layout_marginEnd="5dp"
+            android:textAlignment="viewStart" />
 
         <TextView
             android:layout_width="match_parent"
@@ -35,7 +36,8 @@
             android:textStyle="bold"
             android:ellipsize="end"
             android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp"/>
+            android:layout_marginEnd="5dp"
+            android:textAlignment="viewStart" />
 
         <TextView
             android:layout_width="match_parent"
@@ -49,13 +51,15 @@
             android:textStyle="bold"
             android:ellipsize="end"
             android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp"/>
+            android:layout_marginEnd="5dp"
+            android:textAlignment="viewStart" />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="3">
+        android:layout_weight="3"
+        android:textAlignment="viewStart">
 
         <TextView
             android:layout_width="wrap_content"
@@ -76,6 +80,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:textStyle="bold"
-            android:text="666666" />
+            android:text="666666"
+            android:textAlignment="viewStart" />
     </RelativeLayout>
 </LinearLayout>

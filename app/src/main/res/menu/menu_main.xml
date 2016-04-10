@@ -12,6 +12,13 @@
         android:title="@string/action_clear"
         android:orderInCategory="101"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_go_to_analytics"
+        android:title="@string/action_menu_analytics"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_data_usage_black_24dp"
+        />
+
     <!--<item-->
         <!--android:id="@+id/action_dummy_content"-->
         <!--android:title="Load dummy content"-->
